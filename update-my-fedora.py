@@ -7,7 +7,7 @@ import firmwareUpdates
 
 
 app_name = "Update My Fedora"
-version = "1.0-beta"
+version = "1.0"
 
 
 def prompt_sudo(option):

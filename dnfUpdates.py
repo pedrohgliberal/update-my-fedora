@@ -2,11 +2,12 @@ import subprocess
 
 
 def updates():
-    command = "sudo dnf -y upgrade --refresh"
+    command = ["sudo", "dnf", "-y", "upgrade", "--refresh"]
 
-    print("\n>> DNF Update...")
+    print("\n>> Flatpak Update...")
 
-    if (subprocess.run(command, shell=True).returncode) == 0:
-        print("Update process successfully finished")
-    else:
-        print("Error while process updates")
+    try:
+        if (subprocess.run(command).returncode) == 0:
+            print(">> Update process successfully finished<< ")
+    except subprocess.CalledProcessError as e:
+        print("Error:", e)
