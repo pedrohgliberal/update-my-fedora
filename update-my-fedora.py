@@ -11,7 +11,6 @@ version = "1.0-beta"
 
 
 def prompt_sudo(option):
-    #check_sudo_cmd = "sudo -n uptime 2>&1 | grep \"load\" | wc -l"
     check_sudo_cmd = "sudo -v"
 
     if (subprocess.run(check_sudo_cmd, shell=True).returncode) == 0:
