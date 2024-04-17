@@ -1,9 +1,7 @@
 import os
 import sys
+import pathlib
 import subprocess
-import dnfUpdates
-import flatpakUpdates
-import firmwareUpdates
 
 
 app_name = "Update My Fedora"
@@ -20,7 +18,55 @@ def prompt_sudo(option):
         exit(1)
 
 
-def main() -> int:
+def dnf_update():
+    command = ["sudo", "dnf", "-y", "upgrade", "--refresh"]
+
+    print("\n>> DNF Update...")
+
+    try:
+        if (subprocess.run(command).returncode) == 0:
+            print(">> Update process successfully finished<< ")
+    except subprocess.CalledProcessError as e:
+        print("Error:", e)
+
+
+def flatpak_update():
+    command = ["flatpak", "-y", "update"]
+
+    print("\n>> Flatpak Update...")
+
+    try:
+        if (subprocess.run(command).returncode) == 0:
+            print(">> Update process successfully finished<< ")
+    except subprocess.CalledProcessError as e:
+        print("Error:", e)
+
+
+def firmware_update():
+    command_refresh = ["sudo", "fwupdmgr", "refresh", "--force"]
+    command_get_updates = ["sudo", "fwupdmgr", "get-updates"]
+    command_update = ["sudo", "fwupdmgr", "update"]
+
+    print("\n>> Firmware Update...")
+
+    try:
+        if (subprocess.run(command_refresh).returncode) == 0:
+            print(">> Refresh... success <<\n")
+
+        get_updates_status = subprocess.run(command_get_updates).returncode
+        
+        if (get_updates_status == 0 or
+            get_updates_status == 2):            
+            print(">> Get updates... success <<\n")
+        
+        if (subprocess.run(command_update).returncode == 0):
+            print(">> Firmware update... success <<")
+
+        print(">> Update process successfully finished<< ")
+    except subprocess.CalledProcessError as e:
+        print("Error:", e)
+
+def app_menu():
     while True:
         menu_opts = ({"id": 1, "info": "DNF Update"}, {"id": 2, "info": "Flatpak Update"}, 
                      {"id": 3, "info": "Firmware Update"}, {"id": 4, "info": "Update all"}, 
@@ -46,27 +92,27 @@ def main() -> int:
             return 0
         elif chosen == 1:
             if prompt_sudo("DNF Update") == 0:
-                dnfUpdates.updates()
+                dnf_update()
             else:
                 print(f"\n>>>   Thanks to use {app_name}   <<<")
                 return 0
         elif chosen == 2:
             if prompt_sudo("Flatpak Update") == 0:
-                flatpakUpdates.updates()
+                flatpak_update()
             else:
                 print(f"\n>>>   Thanks to use {app_name}   <<<")
                 return 0
         elif chosen == 3:
             if prompt_sudo("Firmware Update") == 0:
-                firmwareUpdates.updates()
+                firmware_update()
             else:
                 print(f"\n>>>   Thanks to use {app_name}   <<<")
                 return 0
         elif chosen == 4:
             if prompt_sudo("Update all") == 0:
-                dnfUpdates.updates()
-                flatpakUpdates.updates()
-                firmwareUpdates.updates()
+                dnf_update()
+                flatpak_update()
+                firmware_update()
             else:
                 print(f"\n>>>   Thanks to use {app_name} v{version}   <<<")
                 return 0
@@ -84,6 +130,19 @@ def main() -> int:
         if chosen == 0:
             print(f"\n>>>   Thanks to use {app_name} v{version}   <<<")
             return 0
+
+
+def main() -> int:
+    check_sudo_command = ["sudo", "-n", "true", ">", "/dev/null", "2>&1"]
+
+    if subprocess.run(check_sudo_command).returncode == 0:
+        app_menu()
+    else:
+        app_command = ["sudo", "python"]
+        app_command.append(str(pathlib.Path(__file__)))
+
+        print("This app should run with root privileges...\nEnter your sudo password...")
+        subprocess.run(app_command)
 
 
 if __name__ == '__main__':
