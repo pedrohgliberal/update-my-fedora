@@ -65,6 +65,7 @@ def firmware_update():
         print(">> Update process successfully finished<< ")
     except subprocess.CalledProcessError as e:
         print("Error:", e)
+        
 
 def app_menu():
     while True:
@@ -91,29 +92,29 @@ def app_menu():
             print(f"\n>>>   Thanks to use {app_name} v{version}   <<<")
             return 0
         elif chosen == 1:
-            if prompt_sudo("DNF Update") == 0:
+            try:
                 dnf_update()
-            else:
+            except:
                 print(f"\n>>>   Thanks to use {app_name}   <<<")
                 return 0
         elif chosen == 2:
-            if prompt_sudo("Flatpak Update") == 0:
+            try:
                 flatpak_update()
-            else:
+            except:
                 print(f"\n>>>   Thanks to use {app_name}   <<<")
                 return 0
         elif chosen == 3:
-            if prompt_sudo("Firmware Update") == 0:
+            try:
                 firmware_update()
-            else:
+            except:
                 print(f"\n>>>   Thanks to use {app_name}   <<<")
                 return 0
         elif chosen == 4:
-            if prompt_sudo("Update all") == 0:
+            try:
                 dnf_update()
                 flatpak_update()
                 firmware_update()
-            else:
+            except:
                 print(f"\n>>>   Thanks to use {app_name} v{version}   <<<")
                 return 0
         
