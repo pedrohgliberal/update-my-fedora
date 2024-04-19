@@ -8,16 +8,6 @@ app_name = "Update My Fedora"
 version = "1.0"
 
 
-def prompt_sudo(option):
-    check_sudo_cmd = "sudo -v"
-
-    if (subprocess.run(check_sudo_cmd, shell=True).returncode) == 0:
-        return 0
-    else:
-        print(f"\nThe {option} option should be run with root privileges...")
-        exit(1)
-
-
 def dnf_update():
     command = ["sudo", "dnf", "-y", "upgrade", "--refresh"]
 
